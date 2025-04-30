@@ -15,7 +15,10 @@ Get Next Line is a project focused on creating a robust function to read a line 
 - **Works with one file descriptor by reading file line by line**
 
 ## Bonus
-- **Works with two pr more file descriptor at the same time by reading files line by line**
+- **Works with two or more file descriptor at the same time by reading files line by line**
+
+## Tips
+- **To work with bonus 
 
 ## Installation
 
@@ -27,14 +30,18 @@ git clone https://github.com/RubBarkhudaryan/42-Get-Next-Line.git
 ## Compile the library:
 
 ```
-make
+cc -Wall -Wextra -Werror get_next_line.c get_next_line_utils.c
+```
+**For bouns**
+```
+cc -Wall -Wextra -Werror get_next_line_bonus.c get_next_line_utils_bonus.c
 ```
 
 ## Usage
 Include the header file in your project:
 
 ```
-#include "get_next_line.h"
+#include "get_next_line.h" // or "get_next_line_bonus.h"
 ```
 
 ## Example usage
