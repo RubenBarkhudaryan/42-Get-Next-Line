@@ -1,62 +1,70 @@
-
-## 42 Get Next Line README.md
-
 # 42 Get Next Line
 
-Get Next Line is a project focused on creating a robust function to read a line from a file descriptor until a newline or EOF is encountered. This project enhances your understanding of file I/O in C along with dynamic memory management.
+## Overview
+Get Next Line implements a function that returns one full line per call from a file descriptor.
+
+It is designed to handle partial reads, internal buffering, and dynamic line assembly.
+
+The challenge is not just reading a file. It is preserving read state across calls while returning exactly one line at a time with clean memory behavior.
 
 ## Features
+- Buffered reads with configurable buffer size
+- Returns one line at a time
+- Handles end-of-file correctly
+- Prevents memory leaks across repeated calls
+- Bonus support for multiple file descriptors simultaneously
 
-- **Buffered Reading:** Efficiently reads files using a configurable buffer.  
-- **Line-by-Line Output:** Returns a complete line each time the function is called.  
-- **Multi-File Handling:** (Bonus) Supports reading from multiple file descriptors concurrently.
+## Core Concepts
 
-## Mandatory
-- **Works with one file descriptor by reading file line by line**
+### Persistent State Between Calls
+One call may stop in the middle of a buffer. The leftover data must be preserved and reused on the next call.
 
-## Bonus
-- **Works with two or more file descriptor at the same time by reading files line by line**
+### Dynamic Line Assembly
+Lines can be longer than BUFFER_SIZE, so the function appends chunks until a newline or EOF is reached.
 
-## Tips
-- **To work with bonus 
+### EOF and Final Line Handling
+Correct behavior at EOF is subtle:
+- return remaining buffered content if non-empty
+- then return NULL on subsequent calls
 
-## Installation
+### Bonus Multi-FD Strategy
+Bonus mode tracks independent leftovers per file descriptor so simultaneous streams do not corrupt each other.
 
-Clone the repository (bash):
-```
-git clone https://github.com/RubBarkhudaryan/42-Get-Next-Line.git
-```
+## Build
+Mandatory:
+- cc -Wall -Wextra -Werror get_next_line.c get_next_line_utils.c
 
-## Compile the library:
-
-```
-cc -Wall -Wextra -Werror get_next_line.c get_next_line_utils.c
-```
-**For bouns**
-```
-cc -Wall -Wextra -Werror get_next_line_bonus.c get_next_line_utils_bonus.c
-```
+Bonus:
+- cc -Wall -Wextra -Werror get_next_line_bonus.c get_next_line_utils_bonus.c
 
 ## Usage
-Include the header file in your project:
+Include:
+- get_next_line.h
+or
+- get_next_line_bonus.h
 
-```
-#include "get_next_line.h" // or "get_next_line_bonus.h"
-```
+Call:
+- get_next_line(fd)
 
-## Example usage
-```
-int  fd = open("text.txt", RD_ONLY);
-ft_printf("line: %s", get_next_line(fd));
-```
+Behavior contract:
+- Returns next line including trailing newline when present
+- Returns last line without newline if file ends
+- Returns NULL on end or unrecoverable error
 
-## Project Structure
+## Files
+- get_next_line.c: core line-reading logic
+- get_next_line_utils.c: helper functions
+- get_next_line_bonus.c: multi-FD implementation
 
-**get_next_line_utils.c** – utilities for correct functionality of get_next_line
+Common helper responsibilities:
+- string join/slice utilities
+- newline detection
+- leftover extraction and update
 
-**get_next_line.c** - the main part of get_next_line implementation
+## Key Learnings
+- Stateful file reading
+- Heap-based string assembly
+- Edge-case management for files, stdin, and EOF
 
-**get_next_line.h** - header file where were defined all the neccessary functions and macros
-
-**Author
-Rub Barkhudaryan**
+## Notes
+Get Next Line is a foundational exercise in memory-safe incremental parsing.
